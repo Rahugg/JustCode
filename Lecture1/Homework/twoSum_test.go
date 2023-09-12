@@ -1,7 +1,6 @@
 package Homework
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"sort"
 	"testing"
@@ -43,14 +42,14 @@ func TestTwoSum(t *testing.T) {
 			sort.Ints(tt.want)
 			sort.Ints(got)
 
-			fmt.Println("The result is for Slower :", got)
+			//fmt.Println("The result is for Slower :", got)
 			assert.Equal(t, tt.want, got)
 
 			got = twoSumFaster(tt.args.nums, tt.args.target)
 
 			sort.Ints(got)
 
-			fmt.Println("The result is for Faster :", got)
+			//fmt.Println("The result is for Faster :", got)
 			assert.Equal(t, tt.want, got)
 		})
 	}
