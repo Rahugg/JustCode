@@ -5,7 +5,7 @@ package Homework
 func longestCommonPrefix(strs []string) string {
 	var ans string
 	for i, _ := range strs[0] {
-		//fmt.Println(i)
+
 		for _, val2 := range strs {
 			if i == len(val2) || val2[i] != strs[0][i] {
 				return ans
@@ -13,7 +13,7 @@ func longestCommonPrefix(strs []string) string {
 		}
 		ans += string(strs[0][i])
 	}
-	//fmt.Println(ans)
+
 	return ans
 
 }
