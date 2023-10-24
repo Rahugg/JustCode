@@ -20,5 +20,9 @@ func NewRouter(handler *gin.Engine, s *service.Service, l *logger.Logger, MW *mi
 	h := handler.Group("/v1")
 	{
 		newCompanyRoutes(h, s, l, MW)
+		newContactRoutes(h, s, l, MW)
+		newDealRoutes(h, s, l, MW)
+		newTaskRoutes(h, s, l, MW)
+		newTicketRoutes(h, s, l, MW)
 	}
 }

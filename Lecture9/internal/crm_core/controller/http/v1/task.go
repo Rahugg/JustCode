@@ -9,27 +9,27 @@ import (
 	"net/http"
 )
 
-type companyRoutes struct {
+type taskRoutes struct {
 	s *service.Service
 	l *logger.Logger
 }
 
-func newCompanyRoutes(handler *gin.RouterGroup, s *service.Service, l *logger.Logger, MW *middleware.Middleware) {
-	r := &companyRoutes{s, l}
+func newTaskRoutes(handler *gin.RouterGroup, s *service.Service, l *logger.Logger, MW *middleware.Middleware) {
+	r := &taskRoutes{s, l}
 
-	companyHandler := handler.Group("/company")
+	taskHandler := handler.Group("/task")
 	{
 		//middleware for users
-		companyHandler.GET("/", r.getCompanies)
-		companyHandler.GET("/:id", r.getCompany)
-		companyHandler.POST("/", r.createCompany)
-		companyHandler.PUT("/:id", r.updateCompany)
-		companyHandler.DELETE("/:id", r.deleteCompany)
+		taskHandler.GET("/", r.getTasks)
+		taskHandler.GET("/:id", r.getTask)
+		taskHandler.POST("/", r.createTask)
+		taskHandler.PUT("/:id", r.updateTask)
+		taskHandler.DELETE("/:id", r.deleteTask)
 	}
 }
 
-func (cr *companyRoutes) getCompanies(ctx *gin.Context) {
-	companies, err := cr.s.GetCompanies(ctx)
+func (tr *taskRoutes) getTasks(ctx *gin.Context) {
+	tasks, err := tr.s.GetTasks(ctx)
 
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, &entity.CustomResponse{
@@ -42,14 +42,13 @@ func (cr *companyRoutes) getCompanies(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, &entity.CustomResponseWithData{
 		Status:  0,
 		Message: "OK",
-		Data:    companies,
+		Data:    tasks,
 	})
 }
-
-func (cr *companyRoutes) getCompany(ctx *gin.Context) {
+func (tr *taskRoutes) getTask(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	company, err := cr.s.GetCompany(ctx, id)
+	task, err := tr.s.GetTask(ctx, id)
 
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, &entity.CustomResponse{
@@ -62,14 +61,13 @@ func (cr *companyRoutes) getCompany(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, &entity.CustomResponseWithData{
 		Status:  0,
 		Message: "OK",
-		Data:    company,
+		Data:    task,
 	})
 }
+func (tr *taskRoutes) createTask(ctx *gin.Context) {
+	var task entity.Task
 
-func (cr *companyRoutes) createCompany(ctx *gin.Context) {
-	var company entity.Company
-
-	if err := ctx.ShouldBindJSON(&company); err != nil {
+	if err := ctx.ShouldBindJSON(&task); err != nil {
 		ctx.JSON(http.StatusBadRequest, &entity.CustomResponse{
 			Status:  -1,
 			Message: err.Error(),
@@ -77,7 +75,7 @@ func (cr *companyRoutes) createCompany(ctx *gin.Context) {
 		return
 	}
 
-	if err := cr.s.CreateCompany(ctx, company); err != nil {
+	if err := tr.s.CreateTask(ctx, task); err != nil {
 		ctx.JSON(http.StatusInternalServerError, &entity.CustomResponse{
 			Status:  -2,
 			Message: err.Error(),
@@ -90,13 +88,12 @@ func (cr *companyRoutes) createCompany(ctx *gin.Context) {
 		Message: "OK",
 	})
 }
-
-func (cr *companyRoutes) updateCompany(ctx *gin.Context) {
+func (tr *taskRoutes) updateTask(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	var newCompany entity.NewCompany
+	var task entity.Task
 
-	if err := ctx.ShouldBindJSON(&newCompany); err != nil {
+	if err := ctx.ShouldBindJSON(&task); err != nil {
 		ctx.JSON(http.StatusBadRequest, &entity.CustomResponse{
 			Status:  -1,
 			Message: err.Error(),
@@ -104,7 +101,7 @@ func (cr *companyRoutes) updateCompany(ctx *gin.Context) {
 		return
 	}
 
-	if err := cr.s.UpdateCompany(ctx, newCompany, id); err != nil {
+	if err := tr.s.UpdateTask(ctx, task, id); err != nil {
 		ctx.JSON(http.StatusInternalServerError, &entity.CustomResponse{
 			Status:  -2,
 			Message: err.Error(),
@@ -117,11 +114,10 @@ func (cr *companyRoutes) updateCompany(ctx *gin.Context) {
 		Message: "OK",
 	})
 }
-
-func (cr *companyRoutes) deleteCompany(ctx *gin.Context) {
+func (tr *taskRoutes) deleteTask(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	if err := cr.s.DeleteCompany(ctx, id); err != nil {
+	if err := tr.s.DeleteTask(ctx, id); err != nil {
 		ctx.JSON(http.StatusInternalServerError, &entity.CustomResponse{
 			Status:  -1,
 			Message: err.Error(),
