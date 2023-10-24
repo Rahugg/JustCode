@@ -12,3 +12,13 @@ type Contact struct {
 	Phone     string `gorm:"varchar(255);not null" json:"phone"`
 	CompanyID uint   `json:"company_id"`
 }
+
+/*
+{
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "johndoe@example.com",
+    "phone": "123-456-7890",
+    "company_id": 789012
+}
+*/
