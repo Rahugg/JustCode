@@ -2,12 +2,18 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	entity2 "hw8/internal/auth/entity"
 	"hw8/pkg/auth/utils"
 	"strings"
 	"time"
 )
+
+type ResponseJSON struct {
+	CurrentUser *entity2.User
+	CurrentRole *entity2.Role
+}
 
 func (s *Service) SignUp(ctx *gin.Context, payload *entity2.SignUpInput, roleId uint, verified bool, provider string) (interface{}, error) {
 	if !utils.IsValidEmail(payload.Email) {
@@ -99,4 +105,25 @@ func (s *Service) returnUsers(roleId uint) (*[]entity2.SignUpResult, error) {
 		}
 	}
 	return &result, nil
+}
+func (s *Service) Validate(ctx *gin.Context, accessToken string, roles ...interface{}) (*ResponseJSON, error) {
+
+	sub, err := utils.ValidateToken(accessToken, s.Config.Jwt.AccessPrivateKey)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := s.Repo.GetUserByIdWithPreload(fmt.Sprint(sub))
+	if err != nil {
+		return nil, fmt.Errorf("the user belonging to this token no logger exists")
+	}
+
+	role, _ := s.Repo.GetRoleById(user.RoleID)
+	for _, Role := range roles {
+		if role.Name == Role || Role == "any" {
+			response := &ResponseJSON{CurrentUser: user, CurrentRole: role}
+			return response, nil
+		}
+	}
+	return nil, err
 }
