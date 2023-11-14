@@ -22,9 +22,10 @@ db:
   name: 'crm_system'
   port: 5432
 
-auth:
-  login: 'madyar'
-  pass: 'mypass'
+Transport:
+  Validate:
+    Host: http://127.0.0.1:8081
+    Timeout: 5s
 
 jwt:
   access_private_key: rahug
