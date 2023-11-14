@@ -66,10 +66,6 @@ migrate-up: ### migration up
 	migrate -path migrations -database '$(PG_URL)?sslmode=disable' up
 .PHONY: migrate-up
 
-migrate-up: ### migration up
-	migrate -path migrations -database '$(PG_URL)?sslmode=disable' up
-.PHONY: migrate-up
-
 migrate-down: ### migration down
 	migrate -path migrations -database '$(PG_URL)?sslmode=disable' down
 .PHONY: migrate-down

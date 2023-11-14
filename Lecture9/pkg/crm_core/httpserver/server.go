@@ -9,12 +9,6 @@ import (
 	"time"
 )
 
-const (
-	_defaultReadTimeout     = 5 * time.Second
-	_defaultWriteTimeout    = 5 * time.Second
-	_defaultShutdownTimeout = 3 * time.Second
-)
-
 // Server -.
 type Server struct {
 	server          *http.Server
@@ -27,16 +21,16 @@ type Server struct {
 func New(handler http.Handler, config *crm_core.Configuration, opts ...Option) *Server {
 	httpServer := &http.Server{
 		Handler:      handler,
-		ReadTimeout:  _defaultReadTimeout,
-		WriteTimeout: _defaultWriteTimeout,
-		Addr:         config.HttpPort,
+		ReadTimeout:  time.Duration(config.HTTP.DefaultReadTimeout),
+		WriteTimeout: time.Duration(config.HTTP.DefaultWriteTimeout),
+		Addr:         config.HTTP.Port,
 	}
 
 	s := &Server{
 		server:          httpServer,
 		config:          config,
 		notify:          make(chan error, 1),
-		shutdownTimeout: _defaultShutdownTimeout,
+		shutdownTimeout: time.Duration(config.HTTP.DefaultShutdownTimeout),
 	}
 
 	// Custom options
@@ -51,7 +45,7 @@ func New(handler http.Handler, config *crm_core.Configuration, opts ...Option) *
 
 func (s *Server) start() {
 	go func() {
-		log.Printf("Listening on port:%s", s.config.HttpPort)
+		log.Printf("Listening on port:%s", s.config.HTTP.Port)
 		s.notify <- s.server.ListenAndServe()
 		close(s.notify)
 	}()

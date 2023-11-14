@@ -6,6 +6,7 @@ import (
 	entity2 "hw8/internal/auth/entity"
 	"hw8/pkg/auth/utils"
 	"strings"
+	"time"
 )
 
 func (s *Service) SignUp(ctx *gin.Context, payload *entity2.SignUpInput, roleId uint, verified bool, provider string) (interface{}, error) {
@@ -57,22 +58,22 @@ func (s *Service) SignIn(payload *entity2.SignInInput) (*entity2.SignInResult, e
 		return nil, err
 	}
 
-	accessToken, err := utils.GenerateToken(s.Config.AccessTokenExpiresIn, user.ID, s.Config.AccessTokenPrivateKey)
+	accessToken, err := utils.GenerateToken(time.Duration(s.Config.Jwt.AccessTokenExpiredIn), user.ID, s.Config.Jwt.AccessPrivateKey)
 	if err != nil {
 		return nil, err
 	}
 
-	refreshToken, err := utils.GenerateToken(s.Config.RefreshTokenExpiresIn, user.ID, s.Config.RefreshTokenPrivateKey)
+	refreshToken, err := utils.GenerateToken(time.Duration(s.Config.Jwt.RefreshTokenExpiredIn), user.ID, s.Config.Jwt.RefreshPrivateKey)
 	if err != nil {
 		return nil, err
 	}
 
 	data := entity2.SignInResult{
-		Role:            user.Role.Name,
-		AccessToken:     accessToken,
-		RefreshToken:    refreshToken,
-		AccessTokenAge:  s.Config.AccessTokenMaxAge * 60,
-		RefreshTokenAge: s.Config.RefreshTokenMaxAge * 60,
+		Role:         user.Role.Name,
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		//AccessTokenAge:  int(s.Config.Jwt.AccessTokenMaxAge * 60),
+		//RefreshTokenAge: int(s.Config.Jwt.RefreshTokenMaxAge * 60),
 	}
 	return &data, nil
 }

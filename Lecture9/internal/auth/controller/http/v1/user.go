@@ -47,7 +47,7 @@ func (ur *userRoutes) signUpAdmin(ctx *gin.Context) {
 }
 
 func (ur *userRoutes) signUpManager(ctx *gin.Context) {
-	verified := ur.s.Config.GinMode == "debug"
+	verified := ur.s.Config.Gin.Mode == "debug"
 	ur.signUp(ctx, 2, verified, "manager")
 }
 

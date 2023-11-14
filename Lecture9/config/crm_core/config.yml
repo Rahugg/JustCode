@@ -1,0 +1,38 @@
+app:
+  name: 'crm_core'
+  version: '1.0.0'
+
+http:
+  port: '8082'
+  default_read_timeout: 5
+  default_write_timeout: 5
+  default_shutdown_timeout: 5
+
+log:
+  level: 'debug'
+
+gin:
+  mode: 'debug'
+
+db:
+  pool_max: 2
+  host: 'localhost'
+  user: 'postgres'
+  password: '12345'
+  name: 'crm_system'
+  port: 5432
+
+auth:
+  login: 'madyar'
+  pass: 'mypass'
+
+jwt:
+  access_private_key: rahug
+  access_public_key: rahug
+  access_token_expired_in: 1440
+  access_token_max_age: 15
+
+  refresh_private_key: rahug
+  refresh_public_key: rahug
+  refresh_token_expired_in: 60
+  refresh_token_max_age: 60
