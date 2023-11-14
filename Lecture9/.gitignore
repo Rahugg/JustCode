@@ -1,0 +1,4 @@
+.env
+config/auth/app.env
+
+.idea
