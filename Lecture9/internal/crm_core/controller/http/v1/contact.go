@@ -5,17 +5,20 @@ import (
 	"hw8/internal/crm_core/controller/http/middleware"
 	"hw8/internal/crm_core/entity"
 	"hw8/internal/crm_core/service"
+	"hw8/pkg/crm_core/cache"
 	"hw8/pkg/crm_core/logger"
+	"log"
 	"net/http"
 )
 
 type contactRoutes struct {
-	s *service.Service
-	l *logger.Logger
+	s            *service.Service
+	l            *logger.Logger
+	contactCache cache.Contact
 }
 
-func newContactRoutes(handler *gin.RouterGroup, s *service.Service, l *logger.Logger, MW *middleware.Middleware) {
-	r := &contactRoutes{s, l}
+func newContactRoutes(handler *gin.RouterGroup, s *service.Service, l *logger.Logger, MW *middleware.Middleware, cc cache.Contact) {
+	r := &contactRoutes{s, l, cc}
 
 	contactHandler := handler.Group("/contact")
 	{
@@ -48,14 +51,25 @@ func (cr *contactRoutes) getContacts(ctx *gin.Context) {
 func (cr *contactRoutes) getContact(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	contact, err := cr.s.GetContact(ctx, id)
-
+	contact, err := cr.contactCache.Get(ctx, id)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, &entity.CustomResponse{
-			Status:  -1,
-			Message: err.Error(),
-		})
 		return
+	}
+
+	if contact == nil {
+		contact, err = cr.s.GetContact(ctx, id)
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, &entity.CustomResponse{
+				Status:  -1,
+				Message: err.Error(),
+			})
+			return
+		}
+
+		err = cr.contactCache.Set(ctx, id, contact)
+		if err != nil {
+			log.Printf("could not cache contact with id %s: %v", id, err)
+		}
 	}
 
 	ctx.JSON(http.StatusOK, &entity.CustomResponseWithData{

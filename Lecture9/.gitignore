@@ -1,4 +1,6 @@
 .env
 config/auth/app.env
-
+config/crm_core/app.env
 .idea
+
+vendor
