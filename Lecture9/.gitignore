@@ -1,8 +1,6 @@
 .env
-
-config/crm_core/config.yml
-config/auth/config.yml
-
+config/auth/app.env
+config/crm_core/app.env
 .idea
 
 vendor

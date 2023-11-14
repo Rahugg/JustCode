@@ -18,7 +18,7 @@ import (
 )
 
 func Run(cfg *crm_core.Configuration) {
-	l := logger.New(cfg.Gin.Mode)
+	l := logger.New(cfg.GinMode)
 	repo := repoPkg.New(cfg, l)
 	// migrate the tables with gorm.Migrator
 	Migrate(repo, l)
@@ -36,7 +36,7 @@ func Run(cfg *crm_core.Configuration) {
 	handler := gin.Default()
 
 	v1.NewRouter(handler, service, l, middleware, contactCache)
-	httpServer := httpserverPkg.New(handler, cfg, httpserverPkg.Port(cfg.HTTP.Port))
+	httpServer := httpserverPkg.New(handler, cfg, httpserverPkg.Port(cfg.HttpPort))
 
 	// Waiting signal
 	interrupt := make(chan os.Signal, 1)

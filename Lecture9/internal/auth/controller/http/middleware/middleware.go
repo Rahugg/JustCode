@@ -56,7 +56,7 @@ func (m *Middleware) DeserializeUser(roles ...interface{}) gin.HandlerFunc {
 			return
 		}
 
-		sub, err := utils.ValidateToken(accessToken, m.Config.Jwt.AccessPrivateKey)
+		sub, err := utils.ValidateToken(accessToken, m.Config.AccessTokenPrivateKey)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, &entity.CustomResponse{
 				Status:  -2,

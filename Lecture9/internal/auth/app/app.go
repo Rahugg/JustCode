@@ -16,7 +16,7 @@ import (
 )
 
 func Run(cfg *auth.Configuration) {
-	l := logger.New(cfg.Gin.Mode)
+	l := logger.New(cfg.GinMode)
 	repo := repoPkg.New(cfg, l)
 	// Migrate the tables with gorm.Migrator
 	Migrate(repo, l)
@@ -26,7 +26,7 @@ func Run(cfg *auth.Configuration) {
 	handler := gin.Default()
 
 	v1.NewRouter(handler, service, l, middleware)
-	httpServer := httpserver2.New(handler, cfg, httpserver2.Port(cfg.HTTP.Port))
+	httpServer := httpserver2.New(handler, cfg, httpserver2.Port(cfg.HttpPort))
 
 	// Waiting signal
 	interrupt := make(chan os.Signal, 1)

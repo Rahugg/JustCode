@@ -6,24 +6,24 @@ import (
 )
 
 type SignUpInput struct {
-	FirstName       string `gorm:"type:varchar(255);not null" json:"name" binding:"required"`
-	LastName        string `gorm:"type:varchar(255);not null" json:"surname" binding:"required"`
-	Email           string `gorm:"type:varchar(255);not null" json:"email" binding:"required"`
-	Password        string `gorm:"type:varchar(255);not null" json:"password" binding:"required,min=8"`
-	PasswordConfirm string `gorm:"type:varchar(255);not null" json:"passwordConfirm" binding:"required"`
+	FirstName       string `json:"name" binding:"required"`
+	LastName        string `json:"surname" binding:"required"`
+	Email           string `json:"email" binding:"required"`
+	Password        string `json:"password" binding:"required,min=8"`
+	PasswordConfirm string `json:"passwordConfirm" binding:"required"`
 }
 
 type SignInInput struct {
-	Email    string `gorm:"type:varchar(255);not null" json:"email"  binding:"required"`
-	Password string `gorm:"type:varchar(255);not null" json:"password"  binding:"required"`
+	Email    string `json:"email"  binding:"required"`
+	Password string `json:"password"  binding:"required"`
 }
 
 type SignInResult struct {
-	Role         string `json:"role"`
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	//AccessTokenAge  int    `json:"access_token_age"`
-	//RefreshTokenAge int    `json:"refresh_token_age"`
+	Role            string `json:"role"`
+	AccessToken     string `json:"access_token"`
+	RefreshToken    string `json:"refresh_token"`
+	AccessTokenAge  int    `json:"access_token_age"`
+	RefreshTokenAge int    `json:"refresh_token_age"`
 }
 
 type SignUpResult struct {
