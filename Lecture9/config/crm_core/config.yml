@@ -4,6 +4,7 @@ app:
 
 http:
   port: '8082'
+  debugPort: '8084'
   default_read_timeout: 5
   default_write_timeout: 5
   default_shutdown_timeout: 5
