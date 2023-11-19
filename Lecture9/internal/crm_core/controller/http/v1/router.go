@@ -25,5 +25,7 @@ func NewRouter(handler *gin.Engine, s *service.Service, l *logger.Logger, MW *mi
 		newDealRoutes(h, s, l, MW)
 		newTaskRoutes(h, s, l, MW)
 		newTicketRoutes(h, s, l, MW)
+		newStaticRoutes(h, s, l, MW)
 	}
+
 }
