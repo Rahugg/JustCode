@@ -8,6 +8,7 @@ import (
 	"hw8/pkg/auth/logger"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type userRoutes struct {
@@ -39,6 +40,7 @@ func newUserRoutes(handler *gin.RouterGroup, s *service.Service, l *logger.Logge
 		userHandler.POST("/register", r.signUpManager)
 		userHandler.POST("/login", r.signIn)
 		userHandler.GET("/logout", r.logout)
+		userHandler.GET("/validate/:accessToken", r.validate)
 	}
 }
 
@@ -104,5 +106,48 @@ func (ur *userRoutes) logout(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, &entity.CustomResponse{
 		Status:  0,
 		Message: "OK",
+	})
+}
+
+func (ur *userRoutes) validate(ctx *gin.Context) {
+
+	var accessToken string
+	var roles []interface{}
+
+	if err := ctx.ShouldBindJSON(&roles); err != nil {
+		ctx.JSON(http.StatusBadRequest, &entity.CustomResponse{
+			Status:  -1,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	authorizationHeader := ctx.Param("accessToken")
+	fields := strings.Fields(authorizationHeader)
+
+	if len(fields) != 0 && fields[0] == "Bearer" {
+		accessToken = fields[1]
+	}
+
+	if accessToken == "" {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, &entity.CustomResponse{
+			Status:  -2,
+			Message: "You are not logged in",
+		})
+		return
+	}
+
+	response, err := ur.s.Validate(ctx, accessToken, roles)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, &entity.CustomResponse{
+			Status:  -3,
+			Message: err.Error(),
+		})
+	}
+
+	ctx.JSON(http.StatusOK, &entity.CustomResponseWithData{
+		Status:  0,
+		Message: "OK",
+		Data:    response,
 	})
 }

@@ -8,6 +8,7 @@ import (
 	"hw8/internal/crm_core/controller/http/v1"
 	repoPkg "hw8/internal/crm_core/repository"
 	servicePkg "hw8/internal/crm_core/service"
+	"hw8/internal/crm_core/transport"
 	"hw8/pkg/crm_core/cache"
 	httpserverPkg "hw8/pkg/crm_core/httpserver"
 	"hw8/pkg/crm_core/logger"
@@ -31,8 +32,10 @@ func Run(cfg *crm_core.Configuration) {
 
 	contactCache := cache.NewContactCache(redisClient, 10*time.Minute)
 
+	validateTransport := transport.NewTransport(cfg)
+
 	service := servicePkg.New(cfg, repo, l)
-	middleware := middleware2.New(repo, cfg)
+	middleware := middleware2.New(repo, cfg, validateTransport)
 	handler := gin.Default()
 
 	v1.NewRouter(handler, service, l, middleware, contactCache)

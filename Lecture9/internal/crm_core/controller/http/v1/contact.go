@@ -22,6 +22,7 @@ func newContactRoutes(handler *gin.RouterGroup, s *service.Service, l *logger.Lo
 
 	contactHandler := handler.Group("/contact")
 	{
+		contactHandler.Use(MW.DeserializeUser("admin"))
 		//middleware for users
 		contactHandler.GET("/", r.getContacts)
 		contactHandler.GET("/:id", r.getContact)
